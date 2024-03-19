@@ -7,12 +7,12 @@ class ReactiveEffect {
 
   run() {
     activeEffect = this
-    this._fn()
+    return this._fn()
   }
 }
 
 const targetMap = new WeakMap()
-export const track = (target, key) => {
+export const track = (target: Object, key: string | symbol) => {
   // target -> key -> dep
   let depsMap = targetMap.get(target)
   if (!depsMap) {
@@ -29,10 +29,10 @@ export const track = (target, key) => {
   dep.add(activeEffect)
 }
 
-export const trigger = (target, key) => {
+export const trigger = (target: Object, key: string | symbol) => {
   const depsMap = targetMap.get(target)
   const dep = depsMap.get(key)
-  dep.forEach((effect) => effect.run())
+  dep.forEach((effect: ReactiveEffect) => effect.run())
 }
 
 let activeEffect: null | ReactiveEffect = null
@@ -40,4 +40,7 @@ export const effect = (fn: Function) => {
   const _effect = new ReactiveEffect(fn)
 
   _effect.run()
+
+  // 修正 this 指向
+  return _effect.run.bind(_effect)
 }
