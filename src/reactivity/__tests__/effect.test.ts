@@ -20,6 +20,7 @@ describe('effect', () => {
   })
 
   // 为什么要返回 runner？
+  // 我的理解：为后续 scheduler 提供便利
   it('调用 effect 返回 runner', () => {
     // effect() -> fn(runner) -> call -> return
     // 调用 effect 返回一个 runner
