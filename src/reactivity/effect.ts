@@ -1,5 +1,6 @@
 class ReactiveEffect {
   private _fn: any
+  deps = []
 
   constructor(fn: any, public scheduler?: any) {
     this._fn = fn
@@ -8,6 +9,12 @@ class ReactiveEffect {
   run() {
     activeEffect = this
     return this._fn()
+  }
+
+  stop() {
+    this.deps.forEach((dep: any) => {
+      dep.delete(this)
+    })
   }
 }
 
@@ -27,6 +34,8 @@ export const track = (target: Object, key: string | symbol) => {
   }
 
   dep.add(activeEffect)
+  // 每个 ReactiveEffect 实例的 deps 收集 dep
+  activeEffect && activeEffect.deps.push(dep)
 }
 
 export const trigger = (target: Object, key: string | symbol) => {
@@ -49,5 +58,12 @@ export const effect = (fn: Function, options: any = {}) => {
   _effect.run()
 
   // 修正 this 指向
-  return _effect.run.bind(_effect)
+  const runner: any = _effect.run.bind(_effect)
+  // 方便后续通过 runner 找到 ReactiveEffect 实例
+  runner.effect = _effect
+  return runner
+}
+
+export const stop = (runner: any) => {
+  runner.effect.stop()
 }

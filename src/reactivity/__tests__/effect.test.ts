@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { reactive } from '../reactive'
-import { effect } from '../effect'
+import { effect, stop } from '../effect'
 
 describe('effect', () => {
   it('happy path', () => {
@@ -68,5 +68,24 @@ describe('effect', () => {
     run()
     // fn 应该被调用
     expect(dummy).toBe(2)
+  })
+
+  it('stop', () => {
+    let dummy
+    const obj = reactive({ prop: 1 })
+    const runner = effect(() => {
+      dummy = obj.prop
+    })
+    obj.prop = 2
+    expect(dummy).toBe(2)
+
+    // 停止 runner，派发更新时不会执行 fn
+    stop(runner)
+    obj.prop = 3
+    expect(dummy).toBe(2)
+
+    // 手动调用，依然会执行 fn
+    runner()
+    expect(dummy).toBe(3)
   })
 })
