@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { reactive } from '../reactive'
 import { effect } from '../effect'
 
@@ -19,6 +19,7 @@ describe('effect', () => {
     expect(nextAge).toBe(12)
   })
 
+  // 为什么要返回 runner？
   it('调用 effect 返回 runner', () => {
     // effect() -> fn(runner) -> call -> return
     // 调用 effect 返回一个 runner
@@ -34,5 +35,37 @@ describe('effect', () => {
     const r = runner()
     expect(foo).toBe(12)
     expect(r).toBe('foo')
+  })
+
+  // 为什么要有 scheduler？
+  // 我的理解：有了这个调度器（scheduler），我可以手动控制副作用函数 fn的执行
+  it('scheduler', () => {
+    // 1、通过 effect 的第二个参数给定的一个 scheduler 的 fn
+    // 2、effect第一次执行的时候还会执行 fn
+    // 3、当响应式对象 set update 不会执行 fn 而是执行 scheduler
+    // 4. 如果说当执行 runner 的时候，会再次的执行 fn
+    let dummy
+    let run: any
+    const scheduler = vi.fn(() => {
+      run = runner
+    })
+    const obj = reactive({ foo: 1 })
+    const runner = effect(
+      () => {
+        dummy = obj.foo
+      },
+      { scheduler }
+    )
+    expect(scheduler).not.toHaveBeenCalled()
+    expect(dummy).toBe(1)
+    // 当第一次触发依赖时 scheduler 应该被调用
+    obj.foo++
+    expect(scheduler).toHaveBeenCalledTimes(1)
+    // 当响应式对象 set 也就是触发更新，不会执行 fn
+    expect(dummy).toBe(1)
+    // 手动执行 runner
+    run()
+    // fn 应该被调用
+    expect(dummy).toBe(2)
   })
 })
