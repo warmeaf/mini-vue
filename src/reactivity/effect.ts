@@ -1,5 +1,6 @@
 class ReactiveEffect {
   private _fn: any
+  // 为什么 deps 是一个数组呢？
   deps = []
 
   constructor(fn: any, public scheduler?: any) {
