@@ -88,4 +88,15 @@ describe('effect', () => {
     runner()
     expect(dummy).toBe(3)
   })
+
+  // 允许在停止的时候做一些事情，也就是调用 onStop
+  it('onStop', () => {
+    const onStop = vi.fn()
+    const runner = effect(() => {}, {
+      onStop,
+    })
+
+    stop(runner)
+    expect(onStop).toHaveBeenCalled()
+  })
 })
