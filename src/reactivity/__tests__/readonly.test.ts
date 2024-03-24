@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { readonly } from '../reactive'
 
-describe('reactivity/readonly', () => {
-  it('Object', () => {
+describe('readonly', () => {
+  it('happy path', () => {
     const original = { foo: 1, bar: { baz: 2 } }
     const wrapped = readonly(original)
 
