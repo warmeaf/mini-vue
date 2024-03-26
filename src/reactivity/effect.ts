@@ -1,5 +1,7 @@
 class ReactiveEffect {
   private _fn: any
+  private _active = true
+
   // 为什么 deps 是一个数组呢？考虑如下情况：
   // 参考图解：https://www.yuque.com/nextc/xmq8ew/hztf3epl6kkav39y#nteU8
   // let dummy
@@ -9,7 +11,6 @@ class ReactiveEffect {
   //   dummy = obj.prop + obj02.prop
   // })
   deps: any = []
-  active = true
   onStop?: () => void
 
   constructor(fn: any, public scheduler?: any) {
@@ -22,11 +23,11 @@ class ReactiveEffect {
   }
 
   stop() {
-    if (this.active) {
+    if (this._active) {
       this.onStop?.()
       cleanupEffect(this)
       // 标记为已清空
-      this.active = false
+      this._active = false
     }
   }
 }
