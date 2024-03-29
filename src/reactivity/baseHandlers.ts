@@ -1,4 +1,5 @@
 import { track, trigger } from './effect'
+import { ReactiveFlags } from './reactive'
 
 // createGetter 内部返回值是一个函数
 // 我以为会在 getter 函数中新增一个 isReadonly 参数
@@ -6,6 +7,12 @@ import { track, trigger } from './effect'
 const createGetter = (isReadonly = false) => {
   return (target: any, key: any) => {
     const res = Reflect.get(target, key)
+
+    if (key === ReactiveFlags.IS_REACTIVE) {
+      return !isReadonly
+    } else if (key === ReactiveFlags.IS_READONLY) {
+      return isReadonly
+    }
 
     if (!isReadonly) {
       // 依赖收集
@@ -38,7 +45,7 @@ export const mutableHandlers = {
 
 export const readonlyHandlers = {
   get: readdonlyGet,
-  set(target: any, key: any, value: any) {
+  set(target: any, key: any) {
     console.warn(`key: ${key} set 失败，因为 target 是 readonly 的`, target)
     return true
   },

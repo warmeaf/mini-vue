@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { readonly } from '../reactive'
+import { readonly, isReadonly } from '../reactive'
 
 describe('readonly', () => {
   it('happy path', () => {
@@ -11,6 +11,14 @@ describe('readonly', () => {
 
     wrapped.foo = 2
     expect(wrapped.foo).toBe(1)
+
+    expect(isReadonly(wrapped)).toBe(true)
+
+    // 如果是以下情况，该怎么处理？
+    // const obj = {
+    //   __v_is_readonly: true,
+    // }
+    // expect(isReadonly(obj)).toBe(false)
   })
 
   it('调用 set 的时候给出警告', () => {
