@@ -16,7 +16,7 @@ describe('readonly', () => {
 
     // 如果是以下情况，该怎么处理？
     // const obj = {
-    //   __v_is_readonly: true,
+    //   __v_isReadonly: true,
     // }
     // expect(isReadonly(obj)).toBe(false)
   })

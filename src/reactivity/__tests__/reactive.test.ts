@@ -11,11 +11,12 @@ describe('effect', () => {
 
     expect(isReactive(observed)).toBe(true)
     expect(isReactive(original)).toBe(false)
-    
-    // 如果是以下情况，该怎么处理？
-    // const obj = {
-    //   __v_is_reactive: true,
-    // }
-    // expect(isReactive(obj)).toBe(false)
+
+    // obj只是普通对象，但是 isReactive(obj) 返回 true
+    // 这种情况不用考虑吗？（ Vue 源码也没考虑）
+    const obj = {
+      __v_isReactive: true,
+    }
+    expect(isReactive(obj)).toBe(false)
   })
 })
