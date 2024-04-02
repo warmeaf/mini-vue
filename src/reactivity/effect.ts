@@ -26,7 +26,7 @@ class ReactiveEffect {
       return this._fn()
     }
 
-    // 打开依赖收集的开关
+    // 执行_fn之前，打开依赖收集的开关
     shouldTrack = true
     activeEffect = this
     const result = this._fn()
