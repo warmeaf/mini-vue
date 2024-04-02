@@ -79,17 +79,20 @@ describe('effect', () => {
     obj.prop = 2
     expect(dummy).toBe(2)
 
+    obj.prop++
+    expect(dummy).toBe(3)
+
     // 停止 runner，派发更新时不会执行 fn
     stop(runner)
     // obj.prop = 3
     // 由 obj.prop = 3 改成 obj.prop++
     // 触发 setter，重新收集了依赖
     obj.prop++
-    expect(dummy).toBe(2)
+    expect(dummy).toBe(3)
 
     // 手动调用，依然会执行 fn
     runner()
-    expect(dummy).toBe(3)
+    expect(dummy).toBe(4)
   })
 
   // 允许在停止的时候做一些事情，也就是调用 onStop

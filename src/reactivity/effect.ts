@@ -31,6 +31,8 @@ class ReactiveEffect {
     activeEffect = this
     const result = this._fn()
     // 重置依赖收集的开关
+    // 当 stop 后，_active 一直是 false
+    // 所以收集依赖的开关会一直处于关闭状态
     shouldTrack = false
     return result
   }
@@ -51,12 +53,12 @@ const cleanupEffect = (effect: ReactiveEffect) => {
   effect.deps.forEach((dep: any) => {
     dep.delete(effect)
   })
+  effect.deps.length = 0
 }
 
 const targetMap = new WeakMap()
 export const track = (target: Object, key: string | symbol) => {
-  if (!activeEffect) return
-  if (!shouldTrack) return
+  if (!isTracking()) return
 
   // target -> key -> dep
   let depsMap = targetMap.get(target)
@@ -71,9 +73,15 @@ export const track = (target: Object, key: string | symbol) => {
     depsMap.set(key, dep)
   }
 
+  if (dep.has(activeEffect)) return
+
   dep.add(activeEffect)
   // 每个 ReactiveEffect 实例的 deps 收集 dep
   activeEffect.deps.push(dep)
+}
+
+const isTracking = () => {
+  return shouldTrack && activeEffect !== null
 }
 
 export const trigger = (target: Object, key: string | symbol) => {
