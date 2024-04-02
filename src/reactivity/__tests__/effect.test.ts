@@ -81,7 +81,10 @@ describe('effect', () => {
 
     // 停止 runner，派发更新时不会执行 fn
     stop(runner)
-    obj.prop = 3
+    // obj.prop = 3
+    // 由 obj.prop = 3 改成 obj.prop++
+    // 触发 setter，重新收集了依赖
+    obj.prop++
     expect(dummy).toBe(2)
 
     // 手动调用，依然会执行 fn

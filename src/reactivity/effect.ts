@@ -1,3 +1,7 @@
+let activeEffect: null | ReactiveEffect = null
+// 初始状态不允许收集依赖
+let shouldTrack = false
+
 class ReactiveEffect {
   private _fn: any
   private _active = true
@@ -18,8 +22,17 @@ class ReactiveEffect {
   }
 
   run() {
+    if (!this._active) {
+      return this._fn()
+    }
+
+    // 打开依赖收集的开关
+    shouldTrack = true
     activeEffect = this
-    return this._fn()
+    const result = this._fn()
+    // 重置依赖收集的开关
+    shouldTrack = false
+    return result
   }
 
   stop() {
@@ -42,6 +55,9 @@ const cleanupEffect = (effect: ReactiveEffect) => {
 
 const targetMap = new WeakMap()
 export const track = (target: Object, key: string | symbol) => {
+  if (!activeEffect) return
+  if (!shouldTrack) return
+
   // target -> key -> dep
   let depsMap = targetMap.get(target)
   if (!depsMap) {
@@ -57,7 +73,7 @@ export const track = (target: Object, key: string | symbol) => {
 
   dep.add(activeEffect)
   // 每个 ReactiveEffect 实例的 deps 收集 dep
-  activeEffect && activeEffect.deps.push(dep)
+  activeEffect.deps.push(dep)
 }
 
 export const trigger = (target: Object, key: string | symbol) => {
@@ -72,7 +88,6 @@ export const trigger = (target: Object, key: string | symbol) => {
   })
 }
 
-let activeEffect: null | ReactiveEffect = null
 export const effect = (fn: Function, options: any = {}) => {
   const scheduler = options.scheduler
   const _effect = new ReactiveEffect(fn, scheduler)
