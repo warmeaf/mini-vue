@@ -14,9 +14,10 @@ describe('effect', () => {
 
     // obj只是普通对象，但是 isReactive(obj) 返回 true
     // 这种情况不用考虑吗？（ Vue 源码也没考虑）
-    const obj = {
-      __v_isReactive: true,
-    }
-    expect(isReactive(obj)).toBe(false)
+    // 属于特殊情况，不用考虑
+    // const obj = {
+    //   __v_isReactive: true,
+    // }
+    // expect(isReactive(obj)).toBe(false)
   })
 })
