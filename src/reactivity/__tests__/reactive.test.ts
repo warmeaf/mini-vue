@@ -20,4 +20,21 @@ describe('effect', () => {
     // }
     // expect(isReactive(obj)).toBe(false)
   })
+
+  it('嵌套对象', () => {
+    const original = {
+      bar: 1,
+      foo: { bar: 1 },
+      array: [
+        {
+          bar: 2,
+        },
+      ],
+    }
+
+    const observed = reactive(original)
+    expect(isReactive(observed.foo)).toBe(true)
+    expect(isReactive(observed.array)).toBe(true)
+    expect(isReactive(observed.array[0])).toBe(true)
+  })
 })

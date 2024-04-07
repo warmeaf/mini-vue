@@ -13,6 +13,7 @@ describe('readonly', () => {
     expect(wrapped.foo).toBe(1)
 
     expect(isReadonly(wrapped)).toBe(true)
+    expect(isReadonly(wrapped.bar)).toBe(true)
 
     // 如果是以下情况，该怎么处理？
     // const obj = {

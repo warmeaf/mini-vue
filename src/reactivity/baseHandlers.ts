@@ -1,5 +1,6 @@
+import { isObject } from '../shared'
 import { track, trigger } from './effect'
-import { ReactiveFlags } from './reactive'
+import { ReactiveFlags, reactive, readonly } from './reactive'
 
 // createGetter 内部返回值是一个函数
 // 我以为会在 getter 函数中新增一个 isReadonly 参数
@@ -7,6 +8,12 @@ import { ReactiveFlags } from './reactive'
 const createGetter = (isReadonly = false) => {
   return (target: any, key: any) => {
     const res = Reflect.get(target, key)
+
+    // Proxy 只能代理浅层对象，如果想要代理深层对象，需要判断
+    // 如果 res 是一个对象，则使用 reactive/readonly 进行代理并返回代理
+    if (isObject(res)) {
+      return isReadonly ? readonly(res) : reactive(res)
+    }
 
     if (key === ReactiveFlags.IS_REACTIVE) {
       return !isReadonly
