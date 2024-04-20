@@ -77,7 +77,7 @@ export const track = (target: Object, key: string | symbol) => {
 
   dep.add(activeEffect)
   // 每个 ReactiveEffect 实例的 deps 收集 dep
-  activeEffect.deps.push(dep)
+  activeEffect && activeEffect.deps.push(dep)
 }
 
 const isTracking = () => {
