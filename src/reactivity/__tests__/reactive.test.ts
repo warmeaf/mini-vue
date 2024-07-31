@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { reactive, isReactive } from '../reactive'
+import { reactive, isReactive, isProxy } from '../reactive'
 
 describe('effect', () => {
   it('happy path', () => {
@@ -11,6 +11,8 @@ describe('effect', () => {
 
     expect(isReactive(observed)).toBe(true)
     expect(isReactive(original)).toBe(false)
+    expect(isProxy(observed)).toBe(true)
+    expect(isProxy(original)).toBe(false)
 
     // obj只是普通对象，但是 isReactive(obj) 返回 true
     // 这种情况不用考虑吗？（ Vue 源码也没考虑）
