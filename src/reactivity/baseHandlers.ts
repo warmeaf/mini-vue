@@ -10,7 +10,7 @@ const createGetter = (isReadonly = false) => {
     const res = Reflect.get(target, key)
 
     // Proxy 只能代理浅层对象，如果想要代理深层对象，需要判断
-    // 如果 res 是一个对象，则使用 reactive/readonly 进行代理并返回代理
+    // 如果 res 是一个对象，则返回 reactive/readonly 生成的代理对象
     if (isObject(res)) {
       return isReadonly ? readonly(res) : reactive(res)
     }
