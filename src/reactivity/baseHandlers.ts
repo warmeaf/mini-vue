@@ -5,20 +5,24 @@ import { ReactiveFlags, reactive, readonly } from './reactive'
 // createGetter 内部返回值是一个函数
 // 我以为会在 getter 函数中新增一个 isReadonly 参数
 // 但是这里实现的优雅一些，用到了高阶函数
-const createGetter = (isReadonly = false) => {
+const createGetter = (isReadonly = false, shallow = false) => {
   return (target: any, key: any) => {
+    if (key === ReactiveFlags.IS_REACTIVE) {
+      return !isReadonly
+    } else if (key === ReactiveFlags.IS_READONLY) {
+      return isReadonly
+    }
+
     const res = Reflect.get(target, key)
+
+    if (shallow) {
+      return res
+    }
 
     // Proxy 只能代理浅层对象，如果想要代理深层对象，需要判断
     // 如果 res 是一个对象，则返回 reactive/readonly 生成的代理对象
     if (isObject(res)) {
       return isReadonly ? readonly(res) : reactive(res)
-    }
-
-    if (key === ReactiveFlags.IS_REACTIVE) {
-      return !isReadonly
-    } else if (key === ReactiveFlags.IS_READONLY) {
-      return isReadonly
     }
 
     if (!isReadonly) {
@@ -44,6 +48,7 @@ const createSetter = () => {
 const get = createGetter()
 const set = createSetter()
 const readdonlyGet = createGetter(true)
+const shallowReadonlyGet = createGetter(true, true)
 
 export const mutableHandlers = {
   get,
@@ -57,3 +62,7 @@ export const readonlyHandlers = {
     return true
   },
 }
+
+export const shallowReadonlyHandlers = Object.assign({}, readonlyHandlers, {
+  get: shallowReadonlyGet,
+})
