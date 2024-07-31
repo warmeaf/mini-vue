@@ -14,10 +14,14 @@ export const readonly = (raw: any) => {
 }
 
 export const isReactive = (value: any) => {
+  // 如果是响应式对象会触发 getter，返回 true
+  // 如果是非响应式对象，访问不存在的属性，返回 undefined
   return !!value[ReactiveFlags.IS_REACTIVE]
 }
 
 export const isReadonly = (value: any) => {
+  // 如果是响应式对象会触发 getter，返回 true
+  // 如果是非响应式对象，访问不存在的属性，返回 undefined
   return !!value[ReactiveFlags.IS_READONLY]
 }
 
