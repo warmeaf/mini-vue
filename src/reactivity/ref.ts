@@ -48,3 +48,18 @@ export const isRef = (ref: any) => {
 export const unRef = (ref: any) => {
   return isRef(ref) ? ref.value : ref
 }
+
+// 比如在 template 中不需要写 .value 就可以访问变量值
+export const proxyRefs = (objectWithRefs: any) => {
+  return new Proxy(objectWithRefs, {
+    get(target, key) {
+      return unRef(Reflect.get(target, key))
+    },
+    set(target, key, value) {
+      if (isRef(Reflect.get(target, key))) {
+        return Reflect.set(Reflect.get(target, key), 'value', unRef(value))
+      }
+      return Reflect.set(target, key, value)
+    },
+  })
+}

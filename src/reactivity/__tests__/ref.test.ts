@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ref, isRef, unRef } from '../ref'
+import { ref, isRef, unRef, proxyRefs } from '../ref'
 import { effect } from '../effect'
 import { isProxy } from '../reactive'
 
@@ -60,5 +60,23 @@ describe('ref', () => {
       age: 1,
     })
     expect(isProxy(unRef(user))).toBe(true)
+  })
+
+  it('proxyRefs', () => {
+    const user = {
+      age: ref(10),
+      name: 'xiaoming',
+    }
+    const proxyUser = proxyRefs(user)
+    expect(user.age.value).toBe(10)
+    expect(proxyUser.age).toBe(10)
+
+    proxyUser.age = 20
+    expect(user.age.value).toBe(20)
+    expect(proxyUser.age).toBe(20)
+
+    proxyUser.age = ref(10)
+    expect(user.age.value).toBe(10)
+    expect(proxyUser.age).toBe(10)
   })
 })
