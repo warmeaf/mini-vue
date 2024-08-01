@@ -6,6 +6,8 @@ class RefImpl {
   private _value: any
   public dep: any
   private _rawValue: any
+  // 设置一个只读的标识符
+  public readonly __v_isRef = true
 
   constructor(value: any) {
     this._rawValue = value
@@ -44,4 +46,12 @@ class RefImpl {
 
 export const ref = (value: any) => {
   return new RefImpl(value)
+}
+
+export const isRef = (ref: any) => {
+  return !!ref.__v_isRef
+}
+
+export const unRef = (ref: any) => {
+  return isRef(ref) ? ref.value : ref
 }
