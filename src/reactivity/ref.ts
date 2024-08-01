@@ -16,7 +16,7 @@ class RefImpl {
   }
 
   get value() {
-    this.trackRefValue()
+    trackRefValue(this)
     return this._value
   }
 
@@ -28,21 +28,14 @@ class RefImpl {
       triggerEffects(this.dep)
     }
   }
-
-  trackRefValue() {
-    if (isTracking() && !isObject(this._rawValue)) {
-      // 收集依赖，把副作用函数放到集合里
-      trackEffects(this.dep)
-    }
-  }
 }
 
-// const trackRefValue = (ref: RefImpl) => {
-//   if (isTracking() && !isObject(ref.value)) {
-//     // 收集依赖，把副作用函数放到集合里
-//     trackEffects(ref.dep)
-//   }
-// }
+const trackRefValue = (ref: RefImpl) => {
+  if (isTracking()) {
+    // 收集依赖，把副作用函数放到集合里
+    trackEffects(ref.dep)
+  }
+}
 
 export const ref = (value: any) => {
   return new RefImpl(value)
