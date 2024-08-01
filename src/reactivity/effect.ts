@@ -73,6 +73,10 @@ export const track = (target: Object, key: string | symbol) => {
     depsMap.set(key, dep)
   }
 
+  trackEffects(dep)
+}
+
+export const trackEffects = (dep: Set<ReactiveEffect | null>) => {
   if (dep.has(activeEffect)) return
 
   dep.add(activeEffect)
@@ -80,13 +84,17 @@ export const track = (target: Object, key: string | symbol) => {
   activeEffect && activeEffect.deps.push(dep)
 }
 
-const isTracking = () => {
+export const isTracking = () => {
   return shouldTrack && activeEffect !== null
 }
 
 export const trigger = (target: Object, key: string | symbol) => {
   const depsMap = targetMap.get(target)
   const dep = depsMap.get(key)
+  triggerEffects(dep)
+}
+
+export const triggerEffects = (dep: Set<ReactiveEffect>) => {
   dep.forEach((effect: ReactiveEffect) => {
     if (effect.scheduler) {
       effect.scheduler()
