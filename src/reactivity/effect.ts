@@ -2,7 +2,7 @@ let activeEffect: null | ReactiveEffect = null
 // 初始状态不允许收集依赖
 let shouldTrack = false
 
-class ReactiveEffect {
+export class ReactiveEffect {
   private _fn: any
   private _active = true
 
