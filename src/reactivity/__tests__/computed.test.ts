@@ -37,5 +37,9 @@ describe('computed', () => {
     // 应该在修改 value 的时候，重新执行
     expect(cValue.value).toBe(2)
     expect(getter).toHaveBeenCalledTimes(2)
+
+    // 不应该重新计算
+    cValue.value;
+    expect(getter).toHaveBeenCalledTimes(2)
   })
 })
