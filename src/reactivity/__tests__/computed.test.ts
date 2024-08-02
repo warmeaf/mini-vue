@@ -30,12 +30,12 @@ describe('computed', () => {
     cValue.value
     expect(getter).toHaveBeenCalledTimes(1)
 
-    // // 应该在修改 value 的时候，重新执行
-    // value.foo = 2
-    // expect(getter).toHaveBeenCalledTimes(1)
+    // 应该在修改 value 的时候，重新执行
+    value.foo = 2
+    expect(getter).toHaveBeenCalledTimes(1)
 
-    // // 应该在修改 value 的时候，重新执行
-    // expect(cValue.value).toBe(2)
-    // expect(getter).toHaveBeenCalledTimes(2)
+    // 应该在修改 value 的时候，重新执行
+    expect(cValue.value).toBe(2)
+    expect(getter).toHaveBeenCalledTimes(2)
   })
 })
